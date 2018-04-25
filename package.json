@@ -1,0 +1,19 @@
+{
+  "name": "fourinarowapi",
+  "version": "0.0.1",
+  "description": "Backend socket.io and espress api for the fourinarow react native app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js"
+  },
+  "author": "Colin Busch",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.1.0",
+    "uuid": "^3.1.0"
+  }
+}
