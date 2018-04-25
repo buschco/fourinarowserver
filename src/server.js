@@ -129,7 +129,7 @@ function startTimer(gameId, socketId) {
       })
       clients[socketId].leave(gameId)
     }
-  }, 1000)
+  }, 1500)
 }
 
 function getOpenGames(socket, options) {
