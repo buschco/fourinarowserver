@@ -1,3 +1,4 @@
+"use strict";
 var games = []
 var uuidv1 = require('uuid/v1')
 
@@ -50,7 +51,7 @@ exports.removePlayer = function(socketId, gameId, cb) {
   if (index>=0) {
     games[gameId].players.splice(index, 1)
     if(games[gameId].players.length==0){
-      delete games[gameId] 
+      delete games[gameId]
     }
     cb(gameId)
   }

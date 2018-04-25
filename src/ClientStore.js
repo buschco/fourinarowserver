@@ -1,3 +1,4 @@
+"use strict";
 clients = []
 var uuidv1 = require('uuid/v1')
 
