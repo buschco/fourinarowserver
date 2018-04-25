@@ -17,6 +17,8 @@ const SIZES = [
   {w: 10, h: 10},
   {w: 14, h: 14},
 ]
+//// TODO:
+// - Error if player tries to join a non existing game
 
 let clients = {};
 let users = {};
