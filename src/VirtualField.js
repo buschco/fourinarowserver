@@ -1,4 +1,3 @@
-"use strict";
 var fields = []
 
 exports.createField = function (gameId, h, w) {

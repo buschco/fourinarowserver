@@ -1,4 +1,3 @@
-"use strict";
 var games = []
 var uuidv1 = require('uuid/v1')
 
