@@ -73,8 +73,8 @@ function updatePlayers(socket, gameId) {
 function move(socket, gameId, pos) {
   g.move(gameId, socket.id, pos, (index,won)=>{
     if(index>=0){
-      winnerId=won ? socket.id : undefined
-      websocket.to(gameId).emit('move', {pos: pos, player: index+1, winner: winnerId})
+      var winner = won==true ? socket.id : undefined
+      websocket.to(gameId).emit('move', {pos: pos, player: index+1, winner: winner})
     }
   })
 }
