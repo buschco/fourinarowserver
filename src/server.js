@@ -30,7 +30,13 @@ const g = require('./GameStore.js');
 const c = require('./ClientStore');
 
 app.get('/game', (req, res) => {
-  res.json(g.getGame(req.query.id))
+  var game = g.getGame(req.query.id)
+  if(game==undefined){
+    res.status(404)
+    res.type('txt').send('Not found');
+  }else {
+    res.json(game)
+  }
 })
 
 app.get('/games', (req, res) => {
@@ -111,7 +117,7 @@ function join(socket, gameId, name) {
 
 function startTimer(gameId, socketId) {
   g.setReady(socketId, gameId, false)
-  let i=10
+  let i=15
   var int = setInterval(()=> {
     websocket.to(gameId).emit('timer', {time: i, id: socketId, isReady: false})
     i--;
