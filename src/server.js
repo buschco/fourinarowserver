@@ -117,6 +117,7 @@ function join(socket, gameId, name) {
 
 function startTimer(gameId, socketId) {
   g.setReady(socketId, gameId, false)
+  //// TODO:
   let i=15
   var int = setInterval(()=> {
     websocket.to(gameId).emit('timer', {time: i, id: socketId, isReady: false})
@@ -128,14 +129,14 @@ function startTimer(gameId, socketId) {
         startTimer(gameId, g.getNextId(gameId))
       }
     }
-    if(i<=0){
+    if(i<0){
       clearInterval(int)
       g.removePlayer(socketId, gameId,(gameId)=>{
         websocket.to(gameId).emit('timer', {time: 0, id: socketId, isReady: false})
       })
       clients[socketId].leave(gameId)
     }
-  }, 1500)
+  }, 1000)
 }
 
 function getOpenGames(socket, options) {
