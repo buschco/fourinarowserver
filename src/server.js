@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(express.static('static'));
 
 var server = http.Server(app);
 var websocket = socketio(server);
@@ -106,8 +107,8 @@ function join(socket, gameId, name) {
       } else {
         socket.join(gameId);
         socket.emit('join', {game: g.getGames()[gameId], socketId: socket.id})
-        websocket.to(gameId).emit('players',g.getPlayersInGame(gameId))
         var players = g.getPlayersInGame(gameId)
+        websocket.to(gameId).emit('players', players)
         startTimer(gameId, players[0].id)
         startTimer(gameId, players[1].id)
       }
