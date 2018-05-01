@@ -12,7 +12,7 @@ app.use(express.static('static'));
 
 var server = http.Server(app);
 var websocket = socketio(server);
-server.listen(3000, () => console.log('listening on *:3000'));
+server.listen(3000, () => console.log('listening on 3000'));
 
 const SIZES = [
   {w: 8, h: 8},
