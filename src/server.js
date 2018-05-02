@@ -9,8 +9,8 @@ var path = require('path')
 
 var app = express();
 var options = {
-    cert: fs.readFileSync(path.resolve('./cert/server.crt')),
-    key: fs.readFileSync(path.resolve('./cert/server.key'))
+  cert: fs.readFileSync(path.resolve('./cert/server.crt')),
+  key: fs.readFileSync(path.resolve('./cert/server.key'))
 }
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -36,6 +36,15 @@ let fields = [];
 
 const g = require('./GameStore.js');
 const c = require('./ClientStore');
+
+app.get('/info', (req, res) => {
+  var info = {
+    message: 'Ich hab zurzeit einfach Sau wenig Zeit 🙈.
+      Die Farben beim timer werden immer noch braun.
+      Jedoch sollten jetzt die Umrandungen bei den Spielern in der passenden Farbe sein 🤔'
+  }
+  res.json(info)
+})
 
 app.get('/game', (req, res) => {
   var game = g.getGame(req.query.id)
