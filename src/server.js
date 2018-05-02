@@ -1,16 +1,31 @@
 "use strict";
 var express = require('express');
-var http = require('http')
+var https = require('https')
 var socketio = require('socket.io');
 var uuidv1 = require('uuid/v1');
 var bodyParser = require('body-parser');
+var fs = require('fs');
+var path = require('path')
 
 var app = express();
+var options
+if(process.argv[0]==undefined){
+  options = {
+      cert: fs.readFileSync('/etc/letsencrypt/live/four.colinbusch.de/fullchain.pem'),
+      key: fs.readFileSync('/etc/letsencrypt/live/four.colinbusch.de/privkey.pem')
+  }
+} else {
+  options = {
+      cert: fs.readFileSync(path.resolve('./cert/server.crt')),
+      key: fs.readFileSync(path.resolve('./cert/server.key'))
+  }
+}
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static('static'));
 
-var server = http.Server(app);
+var server = https.createServer(options, app)
 var websocket = socketio(server);
 server.listen(3000, () => console.log('listening on 3000'));
 
