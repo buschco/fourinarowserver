@@ -8,17 +8,9 @@ var fs = require('fs');
 var path = require('path')
 
 var app = express();
-var options
-if(process.argv[0]==undefined){
-  options = {
-      cert: fs.readFileSync('/etc/letsencrypt/live/four.colinbusch.de/fullchain.pem'),
-      key: fs.readFileSync('/etc/letsencrypt/live/four.colinbusch.de/privkey.pem')
-  }
-} else {
-  options = {
-      cert: fs.readFileSync(path.resolve('./cert/server.crt')),
-      key: fs.readFileSync(path.resolve('./cert/server.key'))
-  }
+var options = {
+    cert: fs.readFileSync(path.resolve('./cert/server.crt')),
+    key: fs.readFileSync(path.resolve('./cert/server.key'))
 }
 
 app.use(bodyParser.urlencoded({extended: true}));
