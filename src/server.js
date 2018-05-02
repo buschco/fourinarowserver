@@ -38,12 +38,8 @@ const g = require('./GameStore.js');
 const c = require('./ClientStore');
 
 app.get('/info', (req, res) => {
-  var info = {
-    message: 'Ich hab zurzeit einfach Sau wenig Zeit 🙈.
-      Die Farben beim timer werden immer noch braun.
-      Jedoch sollten jetzt die Umrandungen bei den Spielern in der passenden Farbe sein 🤔'
-  }
-  res.json(info)
+  var message = "Ich hab zurzeit einfach Sau wenig Zeit 🙈. Die Farben beim timer werden immer noch braun. Jedoch sollten jetzt die Umrandungen bei den Spielern in der passenden Farbe sein 🤔"
+  res.json({info: message})
 })
 
 app.get('/game', (req, res) => {
