@@ -37,11 +37,6 @@ let fields = [];
 const g = require('./GameStore.js');
 const c = require('./ClientStore');
 
-app.get('/info', (req, res) => {
-  var message = "Ich hab zurzeit einfach Sau wenig Zeit 🙈. Die Farben beim timer werden immer noch braun. Jedoch sollten jetzt die Umrandungen bei den Spielern in der passenden Farbe sein 🤔. Mir fällt gerade noch auf dass das Feld wieder blau ist...sorry😢"
-  res.json({info: message})
-})
-
 app.get('/game', (req, res) => {
   var game = g.getGame(req.query.id)
   if(game==undefined){
