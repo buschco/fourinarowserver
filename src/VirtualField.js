@@ -39,19 +39,58 @@ function isMoveValid (arr,pos) {
 }
 
 function winCheck(arr, pos, player) {
+  var startPos = []
+  startPos[0]={x:0,y:pos.y}
+  startPos[1]={x:pos.x,y:arr.length}
   var right = getDiagStart(arr,pos, 1) //rechts
+  startPos[3]=right
   var left = getDiagStart(arr,pos, -1) //links
+  startPos[2]=left
   var arraysToCheck = []
-  arraysToCheck.push(createLine(arr,right, -1))
-  arraysToCheck.push(createLine(arr,left, 1))
   arraysToCheck.push(arr[pos.y])
   arraysToCheck.push(createCol(arr, pos))
+  arraysToCheck.push(createLine(arr,right, -1))
+  arraysToCheck.push(createLine(arr,left, 1))
   for (var i = 0; i < arraysToCheck.length; i++) {
-    if (arrayFourCheck(arraysToCheck[i],player)) {
-      return true
+    var winline=arrayFourCheck(arraysToCheck[i],player)
+    if (winline!=undefined) {
+      return reduceWinLine(startPos[i],winline,i)
     }
   }
-  return false
+  return undefined
+}
+
+function reduceWinLine(pos, arr, type){
+  // arr: where should be 4 <---needed???
+  // pos:stat pos of the array in the fields <--- needed? yes makes things a lot easier
+  // row: index of winning spots in array
+  // type:
+  var winline = []
+  // - = 0
+  // | = 1
+  // / = 2
+  // \ = 3
+  switch (type) {
+    case 0:
+      for (var i = 0; i < arr.length; i++) {
+        winline.push({x: arr[i], y: pos.y})
+      }
+      break
+    case 1:
+      for (var i = 0; i < arr.length; i++) {
+        winline.push({x: pos.x, y: arr[i]})
+      }
+      break
+    case 2:
+
+      break
+    case 3:
+
+      break
+    default:
+
+  }
+  return winline
 }
 
 function createCol(arr, pos) {
@@ -71,6 +110,7 @@ function getDiagStart(arr, pos, dir) {
 }
 
 function createLine(arr, pos, dir) {
+  if(arr===undefined || pos===undefined || dir === undefined) return
     var i = 0
     var line= []
     while (pos.y-i>=0 && pos.x+(dir*i)>=0 && arr[pos.y-i].length>pos.x+(dir*i)) {
@@ -81,19 +121,22 @@ function createLine(arr, pos, dir) {
 }
 
 function arrayFourCheck(arr,player) {
+  var row =[]
   if (arr.length<4) {
-    return false
+    return undefined
   }
   var j = 0
   for (var i = 0; i < arr.length; i++) {
     if (arr[i]==player) {
+      row.push(i)
       j++
       if (j==4) {
-        return true
+        return row
       }
     } else {
+      row = []
       j=0
     }
   }
-  return false
+  return undefined
 }

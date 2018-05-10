@@ -12,7 +12,8 @@ exports.createGame = function(options, bet, cb) {
     options: options,
     next: -1,
     winner: '',
-    bet: bet
+    bet: bet,
+    status: 0 //0=not ingame; 1=ingame
   }
   games[gameId]=game
   cb(gameId)
@@ -32,10 +33,11 @@ exports.addPlayer = function(socketId, gameId, name, cb) {
     games[gameId].players.push({
       id: socketId,
       ready: false,
-      name: name
+      name: name,
+      wincount: 0
     })
     if(games[gameId].players.length==2){ //einer
-      resetGame(gameId)
+
       cb(true,true)
     } else {
       cb(true,false) //leer
@@ -95,18 +97,14 @@ exports.getWinner = function(gameId) {
 
 exports.move = function(gameId, socketId, pos, cb) {
   if (isPlayersTurn(gameId, socketId)) {
-    f.updateField(gameId,pos,games[gameId].next,(valid,winner)=>{
+    f.updateField(gameId,pos,games[gameId].next,(valid,winline)=>{
       if(valid==false){
         cb(-1)
       } else {
         switchNext(gameId)
-        cb(getIndexOfPlayer(socketId, gameId),winner)
+        cb(getIndexOfPlayer(socketId, gameId),winline)
       }
     })
-    // if(f.updateField(gameId,pos.x,pos.y,games[gameId].next)){
-    //   switchNext(gameId)
-    //   cb(getIndexOfPlayer(socketId, gameId))
-    // }
   } else {
     cb(-1)
   }
@@ -162,6 +160,30 @@ exports.filterGames = function(size, bet) {
   return out
 }
 
+exports.getOtherPlayerId = function(gameId,socketId) {
+  var players = games[gameId].players
+  for (var i = 0; i < players.length; i++) {
+    if (players[i].id!==socketId) {
+      return players[i]
+    }
+  }
+}
+
+exports.resetGame= function(gameId) {
+  f.createField(gameId,games[gameId].options.h,games[gameId].options.w)
+  games[gameId].next=-1
+}
+
+exports.setStatus = function(gameId,status){
+  if(games[gameId]!=undefined){
+    games[gameId].status=status
+  }
+}
+
+exports.getStatus = function(gameId){
+  return games[gameId].status
+}
+
 function getGameId(socketId) {
   for (var key in games) {
     if (games.hasOwnProperty(key) && getIndexOfPlayer(socketId,games[key].id)>=0) {
@@ -169,12 +191,6 @@ function getGameId(socketId) {
     }
   }
   return undefined
-}
-
-function resetGame(gameId) {
-  f.createField(gameId,games[gameId].options.h,games[gameId].options.w)
-  games[gameId].next=-1
-  games[gameId].winner=''
 }
 
 function isPlayersTurn(gameId, socketId) {

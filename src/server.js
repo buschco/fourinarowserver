@@ -89,11 +89,31 @@ function updatePlayers(socket, gameId) {
   websocket.to(gameId).emit('players', g.getPlayersInGame(gameId))
 }
 
+function nextTimer(gameId){
+  if(g.getStatus(gameId)==-1){
+    g.setStatus(gameId,0)
+    var players = g.getPlayersInGame(gameId)
+    startTimer(gameId, players[0].id)
+    startTimer(gameId, players[1].id)
+  }
+  if(g.getStatus(gameId)==1){
+    startTimer(gameId, g.getNextId(gameId))
+  } else if(g.getStatus(gameId)==0 && g.allReady(gameId)==true){
+    websocket.to(gameId).emit('resetField',g.getOptions(gameId))
+    g.setStatus(gameId,1)
+    startTimer(gameId, g.getNextId(gameId))
+  }
+}
+
 function move(socket, gameId, pos) {
-  g.move(gameId, socket.id, pos, (index,won)=>{
+  g.move(gameId, socket.id, pos, (index,winline)=>{
     if(index>=0){
-      var winner = (won==true ? socket.id : undefined)
-      websocket.to(gameId).emit('move', {pos: pos, player: index+1, winner: winner})
+      if(winline!=undefined){
+        g.resetGame(gameId)
+        g.setStatus(gameId,-1)
+      }
+      var winner = (winline!=undefined ? socket.id : undefined)
+      websocket.to(gameId).emit('move', {pos: pos, player: index+1, winner: winner, winline: winline})
     }
   })
 }
@@ -117,8 +137,9 @@ function join(socket, gameId, name) {
         socket.join(gameId);
         socket.emit('join', {game: g.getGames()[gameId], socketId: socket.id})
       } else {
-        socket.join(gameId);
+        socket.join(gameId)
         socket.emit('join', {game: g.getGames()[gameId], socketId: socket.id})
+        g.resetGame(gameId)
         var players = g.getPlayersInGame(gameId)
         websocket.to(gameId).emit('players', players)
         startTimer(gameId, players[0].id)
@@ -132,15 +153,14 @@ function startTimer(gameId, socketId) {
   g.setReady(socketId, gameId, false)
   //// TODO:
   let i=15
+  websocket.to(gameId).emit('timer', {time: i, id: socketId, isReady: false})
   var int = setInterval(()=> {
-    websocket.to(gameId).emit('timer', {time: i, id: socketId, isReady: false})
     i--;
+    websocket.to(gameId).emit('timer', {time: i, id: socketId, isReady: false})
     if(g.getReady(socketId, gameId)==true){
-      websocket.to(gameId).emit('timer', {time: 'ready', id: socketId, isReady: true})
       clearInterval(int)
-      if(g.allReady(gameId) && g.getWinner(gameId)===''){
-        startTimer(gameId, g.getNextId(gameId))
-      }
+      websocket.to(gameId).emit('timer', {time: 'ready', id: socketId, isReady: true})
+      nextTimer(gameId)
     }
     if(i<0){
       clearInterval(int)
