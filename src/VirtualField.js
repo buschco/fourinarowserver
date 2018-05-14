@@ -42,85 +42,80 @@ function winCheck(arr, pos, player) {
   var startPos = []
   startPos[0]={x:0,y:pos.y}
   startPos[1]={x:pos.x,y:arr.length}
-  var right = getDiagStart(arr,pos, 1) //rechts
-  startPos[3]=right
-  var left = getDiagStart(arr,pos, -1) //links
-  startPos[2]=left
+  startPos[2]=getDiagStart(arr,pos, -1)
+  startPos[3]=getDiagStart(arr,pos, 1)
   var arraysToCheck = []
-  arraysToCheck.push(arr[pos.y])
+  arraysToCheck.push(createRow(arr, pos))
   arraysToCheck.push(createCol(arr, pos))
-  arraysToCheck.push(createLine(arr,right, -1))
-  arraysToCheck.push(createLine(arr,left, 1))
+  arraysToCheck.push(createLine(arr,startPos[3], -1))
+  arraysToCheck.push(createLine(arr,startPos[2], 1))
   for (var i = 0; i < arraysToCheck.length; i++) {
-    var winline=arrayFourCheck(arraysToCheck[i],player)
-    if (winline!=undefined) {
-      return reduceWinLine(startPos[i],winline,i)
+    var winIndex=arrayFourCheck(arraysToCheck[i].line,player)
+    if (winIndex!=undefined) {
+      var winline = []
+      for (var j = 0; j < arraysToCheck.length; j++) {
+        winline.push(arraysToCheck[i].cord[winIndex[j]])
+      }
+      return winline
     }
   }
   return undefined
 }
 
-function reduceWinLine(pos, arr, type){
-  // arr: where should be 4 <---needed???
-  // pos:stat pos of the array in the fields <--- needed? yes makes things a lot easier
-  // row: index of winning spots in array
-  // type:
-  var winline = []
-  // - = 0
-  // | = 1
-  // / = 2
-  // \ = 3
-  switch (type) {
-    case 0:
-      for (var i = 0; i < arr.length; i++) {
-        winline.push({x: arr[i], y: pos.y})
-      }
-      break
-    case 1:
-      for (var i = 0; i < arr.length; i++) {
-        winline.push({x: pos.x, y: arr[i]})
-      }
-      break
-    case 2:
-
-      break
-    case 3:
-
-      break
-    default:
-
-  }
-  return winline
-}
-
 function createCol(arr, pos) {
-  var line= []
+  if(arr===undefined || pos===undefined) return
+  var line = []
+  var cord = []
   for (var i = 0; i < arr.length; i++) {
     line.push(arr[i][pos.x])
+    cord.push({x: pos.x, y: i})
   }
-  return line
+  return {line: line, cord: cord}
+}
+
+function createRow(arr, pos) {
+  if(arr===undefined || pos===undefined) return
+  var line = []
+  var cord = []
+  for (var i = 0; i < arr[pos.y].length; i++) {
+    line.push(arr[pos.y][i])
+    cord.push({x: i, y: pos.y})
+  }
+  return {line: line, cord: cord}
 }
 
 function getDiagStart(arr, pos, dir) {
-  let i = 0
-  while (arr.length-1>pos.y+i && arr[i].length-1>pos.x+(dir*i) && pos.x+(dir*(i+1))>=0) {
+  if(arr===undefined || pos===undefined || dir === undefined) return
+  var i = 0;
+  while (pos.y+i<arr.length && pos.x+(dir*i)>=0 && pos.x+(dir*i)<arr[pos.y-i].length) {
     i++
   }
-  return {x: pos.x+(i*dir), y: pos.y+i}
+  i--
+  return {x: pos.x+(dir*i), y: pos.y+i}
+  // if(pos.y==arr.length){
+  //   return pos
+  // }
+  // let i = 0
+  // while (arr.length-1>pos.y+i && arr[i].length-1>pos.x+(dir*i) && pos.x+(dir*(i+1))>=0) {
+  //   i++
+  // }
+  // return {x: pos.x+(i*dir), y: pos.y+i}
 }
 
 function createLine(arr, pos, dir) {
   if(arr===undefined || pos===undefined || dir === undefined) return
     var i = 0
     var line= []
+    var cord=[]
     while (pos.y-i>=0 && pos.x+(dir*i)>=0 && arr[pos.y-i].length>pos.x+(dir*i)) {
+      cord.push({y: pos.y-i, x: pos.x+(i*dir)})
       line.push(arr[pos.y-i][pos.x+(i*dir)])
       i++
     }
-    return line
+  return {line: line, cord: cord}
 }
 
-function arrayFourCheck(arr,player) {
+function arrayFourCheck(arr, player) {
   var row =[]
   if (arr.length<4) {
     return undefined

@@ -216,7 +216,7 @@ function getIndexOfPlayer(socketId, gameId) {
 }
 
 function switchNext(gameId) {
-  if (games[gameId].next==-1) {
+  if (games[gameId]===undefined || games[gameId].next==-1) {
     return false
   } else {
     games[gameId].players[games[gameId].next].ready=true
