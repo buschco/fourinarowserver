@@ -88,7 +88,6 @@ function getDiagStart(arr, pos, dir) {
   if(arr===undefined || pos===undefined || dir === undefined) return
   var i = 0;
   while (pos.y+i<arr.length && pos.x+(dir*i)>=0 && pos.y-i>=0 &&pos.x+(dir*i)<arr[pos.y-i].length) {
-    console.log(pos.y-i)
     i++
   }
   i--
